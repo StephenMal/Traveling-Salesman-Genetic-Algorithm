@@ -35,9 +35,34 @@ public class OneMax extends FitnessFunction{
 
 	public void doRawFitness(Chromo X){
 
-		X.rawFitness = 0;
-		for (int z=0; z<Parameters.numGenes * Parameters.geneSize; z++){
-			if (X.chromo.charAt(z) == '1') X.rawFitness += 1;
+		// Set-up variables
+		X.rawFitness = 0; //sets fitness at 0
+		int[] chromogenes = new int[Parameters.numGenes];  //to store genes
+		int[] cityOrder = new int[Parameters.numGenes+1]; //to store city order
+
+		// Records the genes in a list as integers
+		for (int z=0; z<Parameters.numGenes; z++){
+			chromogenes[z] = X.chromo.getIntGeneValue(z);
+		}
+
+		// Records city order to follow the lowest valued chromosomes
+		for (int z=0; z<Parameter.numGenes; z++){
+			int minValue = Integer.MAX_VALUE;
+			int minValueIndex = -1;
+			for (int i=0; i<Parameteres.numGenes;i++){
+				if(chromogenes[i] < minValue){
+					minValue = chromogenes[i];
+					minValueIndex = i;
+				}
+			}
+			cityOrder[minValueIndex] = z;
+			chromogenes[minValueIndex] = Integer.MAX_VALUE;
+		}
+		cityOrder[Parameters.numGenes] = cityOrder[0]; //ends where started
+
+		// Sums distances
+		for (int z=0; z<Parameter.numGenes + 1; z++){
+			X.rawFitness += CityDistCalc.getCityDistance(cityOrder[z][z+1]);
 		}
 	}
 
@@ -63,4 +88,3 @@ public class OneMax extends FitnessFunction{
 *******************************************************************************/
 
 }   // End of OneMax.java ******************************************************
-
