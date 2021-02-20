@@ -118,6 +118,29 @@ public class Chromo
 			this.chromo = mutChromo;
 			break;
 
+		case 2:     //  For TSP: swap with random city
+
+		for (int j=0; j<(Parameters.geneSize * Parameters.numGenes); j++)
+			x = this.chromo.charAt(j);
+			mutChromo = mutChromo + x;
+
+			for (int j=0; j<(Parameters.geneSize * Parameters.numGenes); j++){
+				x = this.chromo.charAt(j);
+				randnum = Search.r.nextDouble();
+				// swap
+				if (randnum < Parameters.mutationRate){
+					int swappedIndex = Search.r.nextDouble() % Parameters.geneSize;
+					int curIndex = j;
+					
+					char temp = mutChromo[curIndex];
+					mutChromo[curIndex] = mutChromo[swappedIndex];
+					mutChromo[swappedIndex] = temp;
+				}
+				mutChromo = mutChromo + x;
+			}
+			this.chromo = mutChromo;
+			break;
+
 		default:
 			System.out.println("ERROR - No mutation method selected");
 		}
