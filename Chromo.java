@@ -150,10 +150,20 @@ public class Chromo
 			return(j);
 
 		case 2:     //  Tournament Selection
-
+			randnum = Search.r.nextDouble();
+			j = (int) (randnum * Parameters.popSize);
+			randnum = Search.r.nextDouble();
+			k = (int) (randnum * Parameters.popSize);
+			if (Search.member[j].proFitness > Search.member[k].proFitness){
+				return(j);
+			}
+			else{
+				return(k);
+			}
 		default:
 			System.out.println("ERROR - No selection method selected");
 		}
+		
 	return(-1);
 	}
 
