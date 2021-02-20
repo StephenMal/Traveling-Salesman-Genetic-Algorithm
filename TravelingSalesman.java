@@ -62,5 +62,5 @@ public class OneMax extends FitnessFunction{
 *                             STATIC METHODS                                   *
 *******************************************************************************/
 
-}   // End of OneMax.java ******************************************************
+}   // End of TravelingSalesman.java ******************************************************
 

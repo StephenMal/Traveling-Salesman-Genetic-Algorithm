@@ -6,6 +6,7 @@
 import java.io.*;
 import java.util.*;
 import java.text.*;
+import counter.counter;
 
 public class Chromo
 {
@@ -176,7 +177,17 @@ public class Chromo
 			child2.chromo = parent2.chromo.substring(0,xoverPoint1) + parent1.chromo.substring(xoverPoint1);
 			break;
 
-		case 2:     //  Two Point Crossover
+		case 2:     //  Single Point Crossover for TSP
+			xoverPoint1 = 1 + (int)(Search.r.nextDouble() * (Parameters.numGenes * Parameters.geneSize-1));
+
+			child1.chromo = parent1.chromo.substring(0,xoverPoint1);
+			
+			for (int i = 0; i < ) 
+			
+			//child1.chromo = parent1.chromo.substring(0,xoverPoint1) + parent2.chromo.substring(xoverPoint1);
+			
+			// Child 
+			//child2.chromo = 
 
 		case 3:     //  Uniform Crossover
 
