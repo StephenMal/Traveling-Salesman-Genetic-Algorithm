@@ -39,15 +39,15 @@ public class CityDistCalc
   }
 
   // Returns cached distance between two cities
-  public double getCityDistance(int city1, int city2){
+  public static double getCityDistance(int city1, int city2){
     return cityDistArr[city1][city2];
   }
 
-  public double getCityCoordsX(int city){
+  public static double getCityCoordsX(int city){
     return cityCoords[city][0];
   }
 
-  public double getCityCoordsY(int city){
+  public static double getCityCoordsY(int city){
     return cityCoords[city][1];
   }
 
