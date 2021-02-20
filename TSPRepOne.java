@@ -61,7 +61,7 @@ public class TSPRepOne extends FitnessFunction{
 		cityOrder[Parameters.numGenes] = cityOrder[0]; //ends where started
 
 		// Sums distances
-		for (int z=0; z<Parameters.numGenes + 1; z++){
+		for (int z=0; z<Parameters.numGenes; z++){
 			X.rawFitness += CityDistCalc.getCityDistance(cityOrder[z],cityOrder[z+1]);
 		}
 	}
