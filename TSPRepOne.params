@@ -5,7 +5,7 @@ Number of Runs               :10
 Generations per Run          :200
 Population Size              :100
 Selection Method (1)         :2
-Fitness Scaling Type (2)     :0
+Fitness Scaling Type (2)     :3
 Crossover Type (3)           :1
 Crossover Rate (4)           :0.8
 Mutation Type (5)            :1
