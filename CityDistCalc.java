@@ -11,8 +11,8 @@ public class CityDistCalc
   public String type;
   public int dim;
   public String edge_weight_type;
-  public double[][] cityCoords;
-  public double[][] cityDistArr;
+  public static double[][] cityCoords;
+  public static double[][] cityDistArr;
 
   public CityDistCalc(){
     System.out.println("Calculating city dist");

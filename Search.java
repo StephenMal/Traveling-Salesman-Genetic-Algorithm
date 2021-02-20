@@ -17,8 +17,6 @@ public class Search {
 *                           STATIC VARIABLES                                   *
 *******************************************************************************/
 
-	public static CityDistCalc cities = new CityDistCalc(); // For input
-
 	public static FitnessFunction problem;
 
 	public static Chromo[] member;
@@ -55,6 +53,9 @@ public class Search {
 	private static double TmemberFitness;
 
 	private static double fitnessStats[][];  // 0=Avg, 1=Best
+
+
+	public static CityDistCalc cities = new CityDistCalc(); // For input
 
 /*******************************************************************************
 *                              CONSTRUCTORS                                    *
