@@ -42,14 +42,14 @@ public class TSPRepOne extends FitnessFunction{
 
 		// Records the genes in a list as integers
 		for (int z=0; z<Parameters.numGenes; z++){
-			chromogenes[z] = X.chromo.getIntGeneValue(z);
+			chromogenes[z] = X.getIntGeneValue(z);
 		}
 
 		// Records city order to follow the lowest valued chromosomes
-		for (int z=0; z<Parameter.numGenes; z++){
+		for (int z=0; z<Parameters.numGenes; z++){
 			int minValue = Integer.MAX_VALUE;
 			int minValueIndex = -1;
-			for (int i=0; i<Parameteres.numGenes;i++){
+			for (int i=0; i<Parameters.numGenes;i++){
 				if(chromogenes[i] < minValue){
 					minValue = chromogenes[i];
 					minValueIndex = i;
@@ -61,8 +61,8 @@ public class TSPRepOne extends FitnessFunction{
 		cityOrder[Parameters.numGenes] = cityOrder[0]; //ends where started
 
 		// Sums distances
-		for (int z=0; z<Parameter.numGenes + 1; z++){
-			X.rawFitness += CityDistCalc.getCityDistance(cityOrder[z][z+1]);
+		for (int z=0; z<Parameters.numGenes + 1; z++){
+			X.rawFitness += CityDistCalc.getCityDistance(cityOrder[z],cityOrder[z+1]);
 		}
 	}
 
