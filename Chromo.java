@@ -182,12 +182,10 @@ public class Chromo
 
 			child1.chromo = parent1.chromo.substring(0,xoverPoint1);
 			
-			for (int i = 0; i < ) 
+			//for (int i = 0; i < ) 
 			
 			//child1.chromo = parent1.chromo.substring(0,xoverPoint1) + parent2.chromo.substring(xoverPoint1);
-			
-			// Child 
-			//child2.chromo = 
+
 
 		case 3:     //  Uniform Crossover
 
