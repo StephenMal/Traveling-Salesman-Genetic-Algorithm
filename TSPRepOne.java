@@ -7,7 +7,7 @@ import java.io.*;
 import java.util.*;
 import java.text.*;
 
-public class OneMax extends FitnessFunction{
+public class TSPRepOne extends FitnessFunction{
 
 /*******************************************************************************
 *                            INSTANCE VARIABLES                                *
@@ -23,8 +23,8 @@ public class OneMax extends FitnessFunction{
 *                              CONSTRUCTORS                                    *
 *******************************************************************************/
 
-	public OneMax(){
-		name = "OneMax Problem";
+	public TSPRepOne(){
+		name = "Traveling Salesman Problem Rep 1";
 	}
 
 /*******************************************************************************
@@ -36,8 +36,20 @@ public class OneMax extends FitnessFunction{
 	public void doRawFitness(Chromo X){
 
 		X.rawFitness = 0;
-		for (int z=0; z<Parameters.numGenes * Parameters.geneSize; z++){
-			if (X.chromo.charAt(z) == '1') X.rawFitness += 1;
+		int [] cityOrder = new int[Parameters.numGenes+1]
+
+		// Records orderings in CityOrder array
+		for (int z = 0; z < Parameters.numGenes; z++){
+			CityOrder[z] = X.getIntGeneValue(z);
+		}
+
+		// Places cities in appropriate orderings
+		for (int z = 0; z < Parameters.numGenes; z++){
+			int lowestNum = Integer.MAX_VALUE;
+			int lowestNumIndex = -1;
+			for(int i = 0; i < Parameters.numGenes; i++){
+				if
+			}
 		}
 	}
 
@@ -63,4 +75,3 @@ public class OneMax extends FitnessFunction{
 *******************************************************************************/
 
 }   // End of OneMax.java ******************************************************
-
