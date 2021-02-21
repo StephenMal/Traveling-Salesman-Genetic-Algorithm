@@ -120,26 +120,25 @@ public class Chromo
 
 		case 2:     //  For TSP: swap with random city
 
-		for (int j=0; j<(Parameters.geneSize * Parameters.numGenes); j++)
+		// Encode original chromosome
+		for (int j=0; j<(Parameters.geneSize * Parameters.numGenes); j++){}
 			x = this.chromo.charAt(j);
 			mutChromo = mutChromo + x;
+		}
 
-			for (int j=0; j<(Parameters.geneSize * Parameters.numGenes); j++){
-				x = this.chromo.charAt(j);
-				randnum = Search.r.nextDouble();
-				// swap
-				if (randnum < Parameters.mutationRate){
-					int swappedIndex = Search.r.nextDouble() % Parameters.geneSize;
-					int curIndex = j;
-					
-					char temp = mutChromo[curIndex];
-					mutChromo[curIndex] = mutChromo[swappedIndex];
-					mutChromo[swappedIndex] = temp;
-				}
-				mutChromo = mutChromo + x;
+		// swap
+		for (int j=0; j<(Parameters.geneSize * Parameters.numGenes); j++){
+			randnum = Search.r.nextDouble();
+			if (randnum < Parameters.mutationRate){
+				int swappedIndex = Search.r.nextDouble() % Parameters.geneSize;
+				int curIndex = j;
+				char temp = mutChromo[curIndex];
+				mutChromo[curIndex] = mutChromo[swappedIndex];
+				mutChromo[swappedIndex] = temp;
 			}
-			this.chromo = mutChromo;
-			break;
+		}
+		this.chromo = mutChromo;
+		break;
 
 		default:
 			System.out.println("ERROR - No mutation method selected");
@@ -174,6 +173,14 @@ public class Chromo
 			return(j);
 
 		case 2:     //  Tournament Selection
+			randnum = Search.r.nextDouble();
+			j = (int) (randnum * Parameters.popSize);
+			randnum = Search.r.nextDouble();
+			k = (int) (randnum * Parameters.popSize);
+			if (Search.member[j].proFitness > Search.member[k].proFitness)
+				return(j);
+			else
+				return(k);
 
 		default:
 			System.out.println("ERROR - No selection method selected");

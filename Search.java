@@ -54,6 +54,8 @@ public class Search {
 
 	private static double fitnessStats[][];  // 0=Avg, 1=Best
 
+	public static CityDistCalc cities = new CityDistCalc(); // For input
+
 /*******************************************************************************
 *                              CONSTRUCTORS                                    *
 *******************************************************************************/
@@ -70,7 +72,7 @@ public class Search {
 
 	public static void main(String[] args) throws java.io.IOException{
 
-		Calendar dateAndTime = Calendar.getInstance(); 
+		//Calendar dateAndTime = Calendar.getInstance(); 
 		Date startTime = dateAndTime.getTime();
 
 	//  Read Parameter File
@@ -98,6 +100,12 @@ public class Search {
 		}
 		else if (Parameters.problemType.equals("OM")){
 				problem = new OneMax();
+		}
+		//else if (Parameters.problemType.equals("T1")){
+		//	problem = new TSPRepOne();
+		//}
+		else if (Parameters.problemType.equals("T2")){
+			problem = new TSPRepTwo();
 		}
 		else System.out.println("Invalid Problem Type");
 
@@ -377,7 +385,7 @@ public class Search {
 
 		System.out.println();
 		System.out.println("Start:  " + startTime);
-		dateAndTime = Calendar.getInstance(); 
+		//dateAndTime = Calendar.getInstance(); 
 		Date endTime = dateAndTime.getTime();
 		System.out.println("End  :  " + endTime);
 
