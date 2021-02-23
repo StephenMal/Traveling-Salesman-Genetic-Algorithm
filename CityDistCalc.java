@@ -1,6 +1,5 @@
 // Stephen Maldonado
-// File made to read in the input and cache all the euclidean distances between
-// the cities.
+// File made to read in the input and cache all the distances
 
 import java.io.*;
 import java.util.*;
@@ -20,8 +19,9 @@ public class CityDistCalc
 
   public CityDistCalc(){
     System.out.println("Calculating city dist");
+    System.out.println("Input file: " + Parameters.dataInputFileName);
     // Reads in the input and saves it into the files
-    readInput("inputs/att48.tsp");
+    readInput(Parameters.dataInputFileName);
 
     // Calculate and cache the distance between cities
     double tempDbl;

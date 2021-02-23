@@ -1,6 +1,6 @@
 Experiment ID                :tsprepone
 Problem Type                 :T1
-Data Input File Name         :NA
+Data Input File Name         :inputs/att48.tsp
 Number of Runs               :10
 Generations per Run          :250
 Population Size              :250

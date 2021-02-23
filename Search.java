@@ -55,7 +55,7 @@ public class Search {
 	private static double fitnessStats[][];  // 0=Avg, 1=Best
 
 
-	public static CityDistCalc cities = new CityDistCalc(); // For input
+	public static CityDistCalc cities; // For input
 
 /*******************************************************************************
 *                              CONSTRUCTORS                                    *
@@ -84,6 +84,7 @@ public class Search {
 		String summaryFileName = Parameters.expID + "_summary.txt";
 		FileWriter summaryOutput = new FileWriter(summaryFileName);
 		parmValues.outputParameters(summaryOutput);
+		cities = new CityDistCalc();
 
 	//	Set up Fitness Statistics matrix
 		fitnessStats = new double[2][Parameters.generations];
