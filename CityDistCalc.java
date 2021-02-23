@@ -1,3 +1,7 @@
+// Stephen Maldonado
+// File made to read in the input and cache all the euclidean distances between
+// the cities.
+
 import java.io.*;
 import java.util.*;
 import java.text.*;
