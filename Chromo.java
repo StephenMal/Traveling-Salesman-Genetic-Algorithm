@@ -33,6 +33,7 @@ public class Chromo
 		//  Set gene values to a randum sequence of 1's and 0's
 		char geneBit;
 		chromo = "";
+		this.chromo = "";
 		for (int i=0; i<Parameters.numGenes; i++){
 			for (int j=0; j<Parameters.geneSize; j++){
 				randnum = Search.r.nextDouble();
@@ -48,9 +49,8 @@ public class Chromo
 	}
 
 	public Chromo(int tspRepTwo){
-		chromo = "";
-		
 		ArrayList<Integer> cities = new ArrayList<Integer>();
+		this.chromo = "";
 
 		// Initialize list of cities
 		for (int j = 0; j < Parameters.numCity; j++)
@@ -58,45 +58,35 @@ public class Chromo
 
 		// Randomize order of cities
 		Collections.shuffle(cities);
-
-		//for (int j : cities){
-		//	this.chromo += (char)(j + '0');
-		//	System.out.println("" + j + "");
-		//}
 		
 		if (Parameters.numCity >= 10 && Parameters.numCity <= 99){
 			for (int curCity : cities){
 				if (curCity <= 9){
-					this.chromo += "0" + String.valueOf(curCity);
+					this.chromo = this.chromo + "0" + String.valueOf(curCity);
 				}
 				else{
-					this.chromo += String.valueOf(curCity);
+					this.chromo = this.chromo + "" + String.valueOf(curCity);
 				}
 			}
 		}
 		else{
 			for (int curCity : cities){
 				if (curCity <= 9){
-					this.chromo += "000" + String.valueOf(curCity);
+					this.chromo = this.chromo + "000" + String.valueOf(curCity);
 				}
 				else if (curCity <= 99){
-					this.chromo += "00" + String.valueOf(curCity);
+					this.chromo = this.chromo + "00" + String.valueOf(curCity);
 				}
 				else if (curCity <= 999){
-					this.chromo += "0" + String.valueOf(curCity);
+					this.chromo = this.chromo + "0" + String.valueOf(curCity);
 				}
 				else{
-					this.chromo += String.valueOf(curCity);
+					this.chromo = this.chromo + "" + String.valueOf(curCity);
 				}
 			}
 		}
 
-		System.out.println("" + this.chromo + "");
-
-		//else if (Parameters.numCity >= 1000 && Parameters.numCity <= 9999){
-		//}
-		
-		//System.out.println("" + this.chromo + "");
+		System.out.println("Chromo: " + this.chromo);
 
 		this.rawFitness = -1;   //  Fitness not yet evaluated
 		this.sclFitness = -1;   //  Fitness not yet scaled
@@ -183,29 +173,74 @@ public class Chromo
 			}
 			this.chromo = mutChromo;
 			break;
-		/*
+		
 		case 2:     //  For TSP: swap with random city
-
-		// Encode original chromosome
-		for (int j=0; j<(Parameters.geneSize * Parameters.numGenes); j++){
-			x = this.chromo.charAt(j);
-			mutChromo = mutChromo + x;
-		}
-
-		// swap
-		for (int j=0; j<(Parameters.geneSize * Parameters.numGenes); j++){
 			randnum = Search.r.nextDouble();
-			if (randnum < Parameters.mutationRate){
-				int swappedIndex = Search.r.nextDouble() % Parameters.geneSize;
-				int curIndex = j;
-				char temp = mutChromo[curIndex];
-				mutChromo[curIndex] = mutChromo[swappedIndex];
-				mutChromo[swappedIndex] = temp;
+			ArrayList<Integer> citiesMut = new ArrayList<Integer>();
+
+			System.out.println("this.chromo: " + this.chromo);
+
+			if (Parameters.numCity >= 10 && Parameters.numCity <= 99){
+				
+				// Convert string to ArrayList<Integet>
+				for (int i=0; i<Parameters.numCity; i++){
+					citiesMut.add(getIntGeneValueTSP(i));
+				}
+
+				// swap
+				for (int i=0; i<Parameters.numCity; i++){
+					randnum = Search.r.nextDouble();
+					if (randnum < Parameters.mutationRate){
+						int swappedIndex = Search.r.nextInt(Parameters.numCity);
+						Collections.swap(citiesMut, i, swappedIndex);
+					}
+				}
+			
+				// convert chromo back to string
+				for (int curCity : citiesMut){
+					if (curCity <= 9){
+						this.chromo = this.chromo + "0" + String.valueOf(curCity);
+					}
+					else{
+						this.chromo = this.chromo + "" + String.valueOf(curCity);
+					}
+				}
+
 			}
-		}
-		this.chromo = mutChromo;
-		break;
-		*/
+			else{
+
+				// Convert string to ArrayList<Integet>
+				for (int i=0; i<Parameters.numCity; i++){
+					citiesMut.add(getIntGeneValueTSP(i));
+				}
+
+				// swap
+				for (int i=0; i<Parameters.numCity; i++){
+					randnum = Search.r.nextDouble();
+					if (randnum < Parameters.mutationRate){
+						int swappedIndex = Search.r.nextInt(Parameters.numCity);
+						Collections.swap(citiesMut, i, swappedIndex);
+					}
+				}
+			
+				// convert chromo back to string
+				for (int curCity : citiesMut){
+					if (curCity <= 9){
+						this.chromo = this.chromo + "000" + String.valueOf(curCity);
+					}
+					else if (curCity <= 99){
+						this.chromo = this.chromo + "00" + String.valueOf(curCity);
+					}
+					else if (curCity <= 999){
+						this.chromo = this.chromo + "0" + String.valueOf(curCity);
+					}
+					else{
+						this.chromo = this.chromo + "" + String.valueOf(curCity);
+					}
+				}
+			}
+			break;
+
 		default:
 			System.out.println("ERROR - No mutation method selected");
 		}
@@ -274,11 +309,25 @@ public class Chromo
 			break;
 
 		case 2:     //  Single Point Crossover for TSP
-			xoverPoint1 = 1 + (int)(Search.r.nextDouble() * (Parameters.numGenes * Parameters.geneSize-1));
-
-			child1.chromo = parent1.chromo.substring(0,xoverPoint1);
 			
-			//for (int i = 0; i < ) 
+			ArrayList<Integer> citiesXover = new ArrayList<Integer>();
+			//public sta
+
+			// Convert string to ArrayList<Integet>
+			//for (int i=0; i<Parameters.numCity; i++){
+			//	citiesXover.add(getIntGeneValueTSP(i));
+			//}
+					
+			xoverPoint1 = 1 + Search.r.nextInt(Parameters.numCity-1);
+
+			//for (int curCity : citiesXover.subList(xoverPoint1)){
+			//for (int i=0; i<Parameters.numCity; i++){
+			//	if (
+			//}
+
+			//child1.chromo = parent1.chromo.substring(0,xoverPoint1);
+			
+			//for (int i=0; i < Parameters.numCity-xoverPoint1) 
 			
 			//child1.chromo = parent1.chromo.substring(0,xoverPoint1) + parent2.chromo.substring(xoverPoint1);
 			

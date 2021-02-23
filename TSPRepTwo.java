@@ -36,11 +36,12 @@ public class TSPRepTwo extends FitnessFunction{
 		// Set-up variables
 		X.rawFitness = 0; //sets fitness at 0
 		int[] chromogenes = new int[Parameters.numGenes];  //to store genes
-		int[] cityOrder = new int[Parameters.numGenes+1]; //to store city order
+		//int[] cityOrder = new int[Parameters.numGenes+1]; //to store city order
 
 		// Records the genes in a list as integers
 		for (int z=0; z<Parameters.numGenes; z++){
 			chromogenes[z] = X.getIntGeneValueTSP(z);
+            //System.out.println("chromogenes[z]: " + chromogenes[z]);
 		}
 
         /*
@@ -57,14 +58,15 @@ public class TSPRepTwo extends FitnessFunction{
 			cityOrder[minValueIndex] = z;
 			chromogenes[minValueIndex] = Integer.MAX_VALUE;
 		}
-        */
 		//cityOrder[Parameters.numGenes] = cityOrder[0]; //ends where it started
-
+        */
+        //X.rawFitness += CityDistCalc.getCityDistance(chromogenes[z],chromogenes[z+1]);
 		// Sums distances
 		for (int z=0; z<Parameters.numGenes-1; z++){
-			X.rawFitness += CityDistCalc.getCityDistance(cityOrder[z],cityOrder[z+1]);
+			X.rawFitness += CityDistCalc.getCityDistance(chromogenes[z],chromogenes[z+1]);
+            //System.out.println("Raw Fitness: " + X.rawFitness);
 		}
-        X.rawFitness += CityDistCalc.getCityDistance(cityOrder[Parameters.numGenes],cityOrder[0]);
+        X.rawFitness += CityDistCalc.getCityDistance(chromogenes[Parameters.numGenes-1],chromogenes[0]);
 	}
 
 //  PRINT OUT AN INDIVIDUAL GENE TO THE SUMMARY FILE *********************************

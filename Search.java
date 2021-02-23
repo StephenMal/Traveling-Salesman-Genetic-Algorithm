@@ -151,8 +151,14 @@ public class Search {
 
 			//	Initialize First Generation
 			for (int i=0; i<Parameters.popSize; i++){
-				member[i] = new Chromo();
-				child[i] = new Chromo();
+				if (Parameters.problemType.equals("T2")){
+					member[i] = new Chromo(1);
+					child[i] = new Chromo(1);
+				}
+				else{
+					member[i] = new Chromo();
+					child[i] = new Chromo();
+				}
 			}
 
 			//	Begin Each Run
