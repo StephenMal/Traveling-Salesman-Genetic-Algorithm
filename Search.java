@@ -47,6 +47,8 @@ public class Search {
 	public static Random r = new Random();
 	private static double randnum;
 
+	
+
 	private static int memberIndex[];
 	private static double memberFitness[];
 	private static int TmemberIndex;
@@ -72,7 +74,7 @@ public class Search {
 
 	public static void main(String[] args) throws java.io.IOException{
 
-		//Calendar dateAndTime = Calendar.getInstance(); 
+		Calendar dateAndTime = Calendar.getInstance(); 
 		Date startTime = dateAndTime.getTime();
 
 	//  Read Parameter File
@@ -106,6 +108,7 @@ public class Search {
 		//}
 		else if (Parameters.problemType.equals("T2")){
 			problem = new TSPRepTwo();
+			
 		}
 		else System.out.println("Invalid Problem Type");
 
@@ -117,9 +120,17 @@ public class Search {
 		memberFitness = new double[Parameters.popSize];
 		member = new Chromo[Parameters.popSize];
 		child = new Chromo[Parameters.popSize];
-		bestOfGenChromo = new Chromo();
-		bestOfRunChromo = new Chromo();
-		bestOverAllChromo = new Chromo();
+
+		if (Parameters.problemType.equals("T2")){
+			bestOfGenChromo = new Chromo(1);
+			bestOfRunChromo = new Chromo(1);
+			bestOverAllChromo = new Chromo(1);
+		}
+		else{
+			bestOfGenChromo = new Chromo();
+			bestOfRunChromo = new Chromo();
+			bestOverAllChromo = new Chromo();
+		}
 
 		if (Parameters.minORmax.equals("max")){
 			defaultBest = 0;
@@ -385,7 +396,7 @@ public class Search {
 
 		System.out.println();
 		System.out.println("Start:  " + startTime);
-		//dateAndTime = Calendar.getInstance(); 
+		dateAndTime = Calendar.getInstance();
 		Date endTime = dateAndTime.getTime();
 		System.out.println("End  :  " + endTime);
 

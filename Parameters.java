@@ -19,6 +19,7 @@ public class Parameters
 
 	public static String dataInputFileName;
 
+	public static int numCity;
 	public static int numRuns;
 	public static int generations;
 	public static int popSize;
@@ -52,7 +53,7 @@ public class Parameters
 		problemType = parmInput.readLine().substring(30);
 
 		dataInputFileName = parmInput.readLine().substring(30);
-
+		numCity = Integer.parseInt(parmInput.readLine().substring(30).trim());
 		numRuns = Integer.parseInt(parmInput.readLine().substring(30).trim());
 		generations = Integer.parseInt(parmInput.readLine().substring(30).trim());
 		popSize = Integer.parseInt(parmInput.readLine().substring(30).trim());

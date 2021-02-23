@@ -6,7 +6,6 @@
 import java.io.*;
 import java.util.*;
 import java.text.*;
-import counter.counter;
 
 public class Chromo
 {
@@ -48,6 +47,62 @@ public class Chromo
 		this.proFitness = -1;   //  Fitness not yet proportionalized
 	}
 
+	public Chromo(int tspRepTwo){
+		chromo = "";
+		
+		ArrayList<Integer> cities = new ArrayList<Integer>();
+
+		// Initialize list of cities
+		for (int j = 0; j < Parameters.numCity; j++)
+			cities.add(j+1);
+
+		// Randomize order of cities
+		Collections.shuffle(cities);
+
+		//for (int j : cities){
+		//	this.chromo += (char)(j + '0');
+		//	System.out.println("" + j + "");
+		//}
+		
+		if (Parameters.numCity >= 10 && Parameters.numCity <= 99){
+			for (int curCity : cities){
+				if (curCity <= 9){
+					this.chromo += "0" + String.valueOf(curCity);
+				}
+				else{
+					this.chromo += String.valueOf(curCity);
+				}
+			}
+		}
+		else{
+			for (int curCity : cities){
+				if (curCity <= 9){
+					this.chromo += "000" + String.valueOf(curCity);
+				}
+				else if (curCity <= 99){
+					this.chromo += "00" + String.valueOf(curCity);
+				}
+				else if (curCity <= 999){
+					this.chromo += "0" + String.valueOf(curCity);
+				}
+				else{
+					this.chromo += String.valueOf(curCity);
+				}
+			}
+		}
+
+		System.out.println("" + this.chromo + "");
+
+		//else if (Parameters.numCity >= 1000 && Parameters.numCity <= 9999){
+		//}
+		
+		//System.out.println("" + this.chromo + "");
+
+		this.rawFitness = -1;   //  Fitness not yet evaluated
+		this.sclFitness = -1;   //  Fitness not yet scaled
+		this.proFitness = -1;   //  Fitness not yet proportionalized
+	}
+
 
 /*******************************************************************************
 *                                MEMBER METHODS                                *
@@ -78,6 +133,17 @@ public class Chromo
 		geneSign = geneAlpha.charAt(0);
 		if (geneSign == '1') geneValue = geneValue - (int)Math.pow(2.0, Parameters.geneSize-1);
 		return (geneValue);
+	}
+
+	public int getIntGeneValueTSP(int geneID){
+
+		if (Parameters.numCity >= 10 && Parameters.numCity <= 99){
+			return Integer.parseInt(this.chromo.substring(geneID*2,(geneID*2)+2));
+		}
+		else{
+			return Integer.parseInt(this.chromo.substring(geneID*4,(geneID*4)+4));
+		}
+		
 	}
 
 	//  Get Integer Value of a Gene (Positive only) ****************************
@@ -117,11 +183,11 @@ public class Chromo
 			}
 			this.chromo = mutChromo;
 			break;
-
+		/*
 		case 2:     //  For TSP: swap with random city
 
 		// Encode original chromosome
-		for (int j=0; j<(Parameters.geneSize * Parameters.numGenes); j++){}
+		for (int j=0; j<(Parameters.geneSize * Parameters.numGenes); j++){
 			x = this.chromo.charAt(j);
 			mutChromo = mutChromo + x;
 		}
@@ -139,7 +205,7 @@ public class Chromo
 		}
 		this.chromo = mutChromo;
 		break;
-
+		*/
 		default:
 			System.out.println("ERROR - No mutation method selected");
 		}
@@ -215,6 +281,7 @@ public class Chromo
 			//for (int i = 0; i < ) 
 			
 			//child1.chromo = parent1.chromo.substring(0,xoverPoint1) + parent2.chromo.substring(xoverPoint1);
+			
 
 
 		case 3:     //  Uniform Crossover

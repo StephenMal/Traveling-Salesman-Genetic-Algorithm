@@ -7,24 +7,22 @@ import java.io.*;
 import java.util.*;
 import java.text.*;
 
-public class OneMax extends FitnessFunction{
+public class TSPRepTwo extends FitnessFunction{
 
 /*******************************************************************************
 *                            INSTANCE VARIABLES                                *
 *******************************************************************************/
 
-
 /*******************************************************************************
 *                            STATIC VARIABLES                                  *
 *******************************************************************************/
-
 
 /*******************************************************************************
 *                              CONSTRUCTORS                                    *
 *******************************************************************************/
 
-	public OneMax(){
-		name = "OneMax Problem";
+	public TSPRepTwo(){
+		name = "Traveling Salesman Problem RepTwo";
 	}
 
 /*******************************************************************************
@@ -35,10 +33,38 @@ public class OneMax extends FitnessFunction{
 
 	public void doRawFitness(Chromo X){
 
-		X.rawFitness = 0;
-		for (int z=0; z<Parameters.numGenes * Parameters.geneSize; z++){
-			if (X.chromo.charAt(z) == '1') X.rawFitness += 1;
+		// Set-up variables
+		X.rawFitness = 0; //sets fitness at 0
+		int[] chromogenes = new int[Parameters.numGenes];  //to store genes
+		int[] cityOrder = new int[Parameters.numGenes+1]; //to store city order
+
+		// Records the genes in a list as integers
+		for (int z=0; z<Parameters.numGenes; z++){
+			chromogenes[z] = X.getIntGeneValueTSP(z);
 		}
+
+        /*
+		// Records city order to follow the lowest valued chromosomes
+		for (int z=0; z<Parameters.numGenes; z++){
+			int minValue = Integer.MAX_VALUE;
+			int minValueIndex = -1;
+			for (int i=0; i<Parameters.numGenes;i++){
+				if(chromogenes[i] < minValue){
+					minValue = chromogenes[i];
+					minValueIndex = i;
+				}
+			}
+			cityOrder[minValueIndex] = z;
+			chromogenes[minValueIndex] = Integer.MAX_VALUE;
+		}
+        */
+		//cityOrder[Parameters.numGenes] = cityOrder[0]; //ends where it started
+
+		// Sums distances
+		for (int z=0; z<Parameters.numGenes-1; z++){
+			X.rawFitness += CityDistCalc.getCityDistance(cityOrder[z],cityOrder[z+1]);
+		}
+        X.rawFitness += CityDistCalc.getCityDistance(cityOrder[Parameters.numGenes],cityOrder[0]);
 	}
 
 //  PRINT OUT AN INDIVIDUAL GENE TO THE SUMMARY FILE *********************************
@@ -62,5 +88,4 @@ public class OneMax extends FitnessFunction{
 *                             STATIC METHODS                                   *
 *******************************************************************************/
 
-}   // End of TravelingSalesman.java ******************************************************
-
+}   // End of TSPRepTwo.java ******************************************************
