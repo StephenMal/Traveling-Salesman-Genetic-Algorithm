@@ -64,6 +64,21 @@ public class TSPRepOne extends FitnessFunction{
 		for (int z=0; z<Parameters.numGenes; z++){
 			X.rawFitness += CityDistCalc.getCityDistance(cityOrder[z],cityOrder[z+1]);
 		}
+
+		/*
+		// Replace Genes w/ city index, a second attempt at improving the scores
+		// Failed, results were worse than before.
+		for (int z=0; z<Parameters.numGenes;z++){
+			String binaryStringForCity = Integer.toBinaryString(cityOrder[z]);
+			for(int i=0; binaryStringForCity.length() < Parameters.geneSize; i++){
+				binaryStringForCity = "0" + binaryStringForCity;
+			}
+			int start = z*Parameters.geneSize;
+			int end = (z+1)*Parameters.geneSize-1;
+			X.chromo = X.chromo.substring(0,start) + binaryStringForCity + X.chromo.substring(end,X.chromo.length()-1);
+
+		}
+		*/
 	}
 
 //  PRINT OUT AN INDIVIDUAL GENE TO THE SUMMARY FILE *********************************
