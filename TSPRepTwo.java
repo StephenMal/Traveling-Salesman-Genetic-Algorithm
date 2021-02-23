@@ -63,10 +63,10 @@ public class TSPRepTwo extends FitnessFunction{
         //X.rawFitness += CityDistCalc.getCityDistance(chromogenes[z],chromogenes[z+1]);
 		// Sums distances
 		for (int z=0; z<Parameters.numGenes-1; z++){
-			X.rawFitness += CityDistCalc.getCityDistance(chromogenes[z],chromogenes[z+1]);
+			X.rawFitness += CityDistCalc.getCityDistance(chromogenes[z]-1,chromogenes[z+1]-1);
             //System.out.println("Raw Fitness: " + X.rawFitness);
 		}
-        X.rawFitness += CityDistCalc.getCityDistance(chromogenes[Parameters.numGenes-1],chromogenes[0]);
+        X.rawFitness += CityDistCalc.getCityDistance(chromogenes[Parameters.numGenes-1]-1,chromogenes[0]-1);
 	}
 
 //  PRINT OUT AN INDIVIDUAL GENE TO THE SUMMARY FILE *********************************
