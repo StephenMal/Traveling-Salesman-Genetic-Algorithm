@@ -17,6 +17,8 @@ public class Chromo
 	public double rawFitness;
 	public double sclFitness;
 	public double proFitness;
+	public int tspRepresentative;
+	public int cityNumber;
 
 /*******************************************************************************
 *                            INSTANCE VARIABLES                                *
@@ -30,7 +32,7 @@ public class Chromo
 
 	public Chromo(){
 
-		//  Set gene values to a randum sequence of 1's and 0's
+		//  Scleet gene values to a randum sequence of 1's and 0's
 		char geneBit;
 		chromo = "";
 		for (int i=0; i<Parameters.numGenes; i++){
@@ -47,6 +49,75 @@ public class Chromo
 		this.proFitness = -1;   //  Fitness not yet proportionalized
 	}
 
+public Chromo(boolean viewTSP, int cityNumber)
+	{			
+		chromo = "";
+		String gene = "";
+		int initialCity = 0;
+		Set<Integer> seenCity = new HashSet<Integer>();
+
+		ArrayList<Integer> randnums = new ArrayList<Integer>();
+		
+		for (int i = 1; i <= cityNumber; i++) 
+		{
+			randnums.add(i);
+		}
+
+		Collections.shuffle(randnums);
+		
+		for (int points : randnums)
+		{		
+			if (points <= 15) 
+			{
+				gene = "00" + Integer.toHexString(points);
+				this.chromo += gene;
+			}
+			else if(points <= 255) 
+			{
+				gene = "0" + Integer.toHexString(points);
+				this.chromo += gene;
+			}
+			else 
+			{
+				gene = Integer.toHexString(points);
+				this.chromo += gene;
+			}
+		} 
+		
+		this.tspRepresentative = 1;
+		this.cityNumber = cityNumber;
+		this.rawFitness = -1;   //  Fitness not yet evaluated
+		this.sclFitness = -1;   //  Fitness not yet scaled
+		this.proFitness = -1;   //  Fitness not yet proportionalized
+		
+	}
+
+	public Chromo(boolean viewTSP, int cityNumber, boolean representative2)
+	{
+		
+		chromo = "";
+		String gene = "";
+		int initialCity = 0;
+
+		Set<Integer> seenCity = new HashSet<Integer>();
+		ArrayList<Integer> randnums = new ArrayList<Integer>();
+		
+		for (int i = 1; i <= cityNumber; i++) 
+		{
+			randnums.add(i);
+		}		
+		Collections.shuffle(randnums);
+		
+		for (int points : randnums)
+		{
+			this.chromo += (char)(points + '0');
+		}
+		this.tspRepresentative = 2;
+		this.cityNumber = cityNumber;
+		this.rawFitness = -1;   //  Fitness not yet evaluated
+		this.sclFitness = -1;   //  Fitness not yet scaled
+		this.proFitness = -1;   //  Fitness not yet proportionalized
+	}
 
 /*******************************************************************************
 *                                MEMBER METHODS                                *
@@ -116,10 +187,23 @@ public class Chromo
 			}
 			this.chromo = mutChromo;
 			break;
+		case 2:
+
+		for (int j=0; j<(Parameters.geneSize * Parameters.numGenes); j++){
+				x = this.chromo.charAt(j);
+				randnum = Search.r.nextInt(cityNumber);
+				if (randnum < Parameters.mutationRate){
+					x = (char)(randnum + '0');
+				}
+				mutChromo = mutChromo + x;
+			}
+			this.chromo = mutChromo;
+			 TSP_RepChild2(this);
+			break; 
 
 		default:
-			System.out.println("ERROR - No mutation method selected");
 		}
+
 	}
 
 /*******************************************************************************
@@ -150,15 +234,112 @@ public class Chromo
 			return(j);
 
 		case 2:     //  Tournament Selection
+		
+		    int firstparameter = Math.abs(Search.r.nextInt());
+			int secondparameter = Math.abs(Search.r.nextInt()); 
+			double slice = 0.5;
+			
+			if (slice > Search.r.nextDouble())
+				return (firstparameter % Parameters.popSize);
+			else
+				return (secondparameter % Parameters.popSize);
+		case 4: //Rank Selection
 
+			randnum = Search.r.nextDouble();
+			
+			for (j=0; j<Parameters.popSize; j++){
+				rWheel = rWheel + Search.member[j].proFitness;
+				if (randnum < rWheel) return(j);
+			}
 		default:
-			System.out.println("ERROR - No selection method selected");
+
+			//System.out.println("ERROR - No selection method selected");
 		}
 	return(-1);
 	}
 
 	//  Produce a new child from two parents  **********************************
+	private static void TSP_RepChild(Chromo X)
+	{
+		Set<Integer> chromoDistance = new HashSet<Integer>();
+		ArrayList<Integer> adjust = new ArrayList<Integer>();
+		for (int z=0; z<Parameters.numGenes * Parameters.geneSize; z+=3)
+		{
+			int presentCity = Integer.parseInt(X.chromo.substring(z, z+3), 16);
+			if (presentCity > Parameters.numGenes || presentCity <= 0)
+				adjust.add(z);
+			else if (chromoDistance.contains(presentCity))
+				adjust.add(z);
+			else
+				chromoDistance.add(presentCity);			
+		}
+		Set<Integer> delta = new HashSet<Integer>();
+		delta.addAll(TSP_Rep.distance);
+		delta.removeAll(chromoDistance);
+		if(!delta.isEmpty())
+		{
+			Iterator<Integer> execute = delta.iterator();
+			StringBuffer standby = new StringBuffer(X.chromo);
+			String gene = "";
+			for (int city : adjust)
+			{
+				int goodCity = execute.next();
+				if (goodCity <= 15) 
+				{
+					gene = "00" + Integer.toHexString(goodCity);
+					standby.replace(city, city+3, gene);
+				}
+				else if(goodCity <= 255) 
+				{
+					gene = "0" + Integer.toHexString(goodCity);
+					standby.replace(city, city+3, gene);
+				}
+				else 
+				{
+					gene = Integer.toHexString(goodCity);
+					standby.replace(city, city+3, gene);
+				}	
+			}
+			X.chromo = standby.toString();
+		}
+	}
 
+	private static void TSP_RepChild2(Chromo X)
+	{
+		Set<Integer> chromoDistance = new HashSet<Integer>();
+		ArrayList<Integer> adjust = new ArrayList<Integer>();
+		for (int z=0; z< Parameters.numGenes; z++)
+		{
+			int presentCity = X.chromo.charAt(z) - '0';
+			if (presentCity > Parameters.numGenes || presentCity <= 0)
+				adjust.add(z);
+			else if (chromoDistance.contains(presentCity)) {
+				adjust.add(z);
+			}
+			else
+				chromoDistance.add(presentCity);			
+		}
+		Set<Integer> delta = new HashSet<Integer>();
+		delta.addAll(TSP_Rep2.distance);
+		delta.removeAll(chromoDistance);
+		if(!delta.isEmpty())
+		{
+			Iterator<Integer> execute = delta.iterator();
+			StringBuffer standby = new StringBuffer(X.chromo);
+			String gene = "";
+			for (int city : adjust)
+			{
+				if (!execute.hasNext())
+					break;
+				
+				int goodCity = execute.next();
+				char convert = (char)(goodCity + '0');
+				standby.setCharAt(city, convert);
+			}
+			X.chromo = standby.toString();
+		}
+
+	}
 	public static void mateParents(int pnum1, int pnum2, Chromo parent1, Chromo parent2, Chromo child1, Chromo child2){
 
 		int xoverPoint1;
@@ -174,12 +355,90 @@ public class Chromo
 			//  Create child chromosome from parental material
 			child1.chromo = parent1.chromo.substring(0,xoverPoint1) + parent2.chromo.substring(xoverPoint1);
 			child2.chromo = parent2.chromo.substring(0,xoverPoint1) + parent1.chromo.substring(xoverPoint1);
+			
+			if (Parameters.problemType.equals("TSP_Rep"))
+			{
+				TSP_RepChild(child1);
+				TSP_RepChild(child2);
+			}
+			else if (Parameters.problemType.equals("TSP_Rep2"))
+			{
+				TSP_RepChild2(child1);
+				TSP_RepChild2(child2);
+			}
+
 			break;
 
-		case 2:     //  Two Point Crossover
+		case 2:     //  Two Point Crossover:
+			
+			xoverPoint1 = 1 + (int)(Search.r.nextDouble() * (Parameters.numGenes * Parameters.geneSize-1));
+			xoverPoint2 = 1 + (int)(Search.r.nextDouble() * (Parameters.numGenes * Parameters.geneSize-1));
 
-		case 3:     //  Uniform Crossover
+			if(xoverPoint1 < xoverPoint2)
+			{
+			child1.chromo = parent1.chromo.substring(0, xoverPoint1) + parent2.chromo.substring(xoverPoint1, xoverPoint2) + parent1.chromo.substring(xoverPoint2);
+			child2.chromo = parent2.chromo.substring(0, xoverPoint1) + parent1.chromo.substring(xoverPoint1, xoverPoint2) + parent2.chromo.substring(xoverPoint2);
+			}
+			else if(xoverPoint1 >= xoverPoint2)
+			{
+			child1.chromo = parent1.chromo.substring(0, xoverPoint2) + parent2.chromo.substring(xoverPoint2, xoverPoint1) + parent1.chromo.substring(xoverPoint1);
+			child2.chromo = parent2.chromo.substring(0, xoverPoint2) + parent1.chromo.substring(xoverPoint2, xoverPoint1) + parent2.chromo.substring(xoverPoint1);
+			}
+			else
+			{
+				System.out.println("ERROR - Bad crossover points selected");
+				break;
+			}
 
+			if (Parameters.problemType.equals("TSP_Rep"))
+			{
+				TSP_RepChild(child1);
+				TSP_RepChild(child2);
+			}
+			else if (Parameters.problemType.equals("TSP_Rep2"))
+			{
+				TSP_RepChild2(child1);
+				TSP_RepChild2(child2);
+			}
+
+			break;
+
+			
+		case 3:     //  Uniform Crossover 
+
+			StringBuffer standbyChild1 = new StringBuffer();
+			StringBuffer standbyChild2 = new StringBuffer();
+
+			for(int i = 0; i < (Parameters.numGenes * Parameters.geneSize); i++)
+			{
+				randnum = Search.r.nextDouble();
+				if(randnum > Parameters.xoverRate)
+				{
+					standbyChild1.append(parent2.chromo.charAt(i));
+					standbyChild2.append(parent1.chromo.charAt(i));
+				}
+				else
+				{
+					standbyChild1.append(parent1.chromo.charAt(i));
+					standbyChild2.append(parent2.chromo.charAt(i));					
+				}
+			}
+
+			child1.chromo = standbyChild1.toString();
+			child2.chromo = standbyChild2.toString();
+
+			if (Parameters.problemType.equals("TSP_Rep"))
+			{
+				TSP_RepChild(child1);
+				TSP_RepChild(child2);
+			}
+			else if (Parameters.problemType.equals("TSP_Rep2"))
+			{
+				TSP_RepChild2(child1);
+				TSP_RepChild2(child2);
+			}
+			break;
+			
 		default:
 			System.out.println("ERROR - Bad crossover method selected");
 		}

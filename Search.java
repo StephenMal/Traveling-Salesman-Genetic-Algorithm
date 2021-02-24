@@ -21,6 +21,7 @@ public class Search {
 
 	public static Chromo[] member;
 	public static Chromo[] child;
+	public static Chromo[] classify;
 
 	public static Chromo bestOfGenChromo;
 	public static int bestOfGenR;
@@ -31,9 +32,13 @@ public class Search {
 	public static Chromo bestOverAllChromo;
 	public static int bestOverAllR;
 	public static int bestOverAllG;
+	public static int optOutput;
+	public static int optChromo;
 
 	public static double sumRawFitness;
 	public static double sumRawFitness2;	// sum of squares of fitness
+	public static double sumBestFit;
+    public static double sumBestFit2; 
 	public static double sumSclFitness;
 	public static double sumProFitness;
 	public static double defaultBest;
@@ -41,6 +46,12 @@ public class Search {
 
 	public static double averageRawFitness;
 	public static double stdevRawFitness;
+	public static double stdevBestFitness;
+    public static double average95CI;
+    public static double best95CI;
+    public static boolean viewTSP;
+    public static double tspRepresentative;
+
 
 	public static int G;
 	public static int R;
@@ -49,10 +60,12 @@ public class Search {
 
 	private static int memberIndex[];
 	private static double memberFitness[];
+
 	private static int TmemberIndex;
 	private static double TmemberFitness;
 
 	private static double fitnessStats[][];  // 0=Avg, 1=Best
+	private static int optgen[];
 
 /*******************************************************************************
 *                              CONSTRUCTORS                                    *
@@ -83,10 +96,16 @@ public class Search {
 		parmValues.outputParameters(summaryOutput);
 
 	//	Set up Fitness Statistics matrix
-		fitnessStats = new double[2][Parameters.generations];
+		fitnessStats = new double[6][Parameters.generations];
+		optgen = new int [Parameters.numRuns+1];
 		for (int i=0; i<Parameters.generations; i++){
 			fitnessStats[0][i] = 0;
 			fitnessStats[1][i] = 0;
+			//For Average Fitness, Best Fitness, stdDev, BestStdDev
+			fitnessStats[2][i] = 0;
+            fitnessStats[3][i] = 0;
+            fitnessStats[4][i] = 0;
+            fitnessStats[5][i] = 0;
 		}
 
 	//	Problem Specific Setup - For new new fitness function problems, create
@@ -95,9 +114,25 @@ public class Search {
  
 		if (Parameters.problemType.equals("NM")){
 				problem = new NumberMatch();
+				optOutput = 0;
 		}
 		else if (Parameters.problemType.equals("OM")){
 				problem = new OneMax();
+				optOutput = 0;
+		}
+		else if (Parameters.problemType.equals("TSP_Rep"))
+		{
+			problem = new TSP_Rep(Parameters.fitEvalXY);
+			tspRepresentative = 1;
+			viewTSP = true;
+			optOutput = 0;
+		}
+		else if (Parameters.problemType.equals("TSP_Rep2"))
+		{
+			problem = new TSP_Rep2(Parameters.fitEvalXY);
+			tspRepresentative = 2;
+			viewTSP = true;
+			optOutput = 0;
 		}
 		else System.out.println("Invalid Problem Type");
 
@@ -113,27 +148,65 @@ public class Search {
 		bestOfRunChromo = new Chromo();
 		bestOverAllChromo = new Chromo();
 
+		if (viewTSP){
+			if (tspRepresentative == 1)
+			{
+				bestOfGenChromo = new Chromo(viewTSP, Parameters.numGenes);
+				bestOfRunChromo = new Chromo(viewTSP, Parameters.numGenes);
+				bestOverAllChromo = new Chromo(viewTSP, Parameters.numGenes);
+			}
+			else
+			{
+				bestOfGenChromo = new Chromo(viewTSP, Parameters.numGenes, true);
+				bestOfRunChromo = new Chromo(viewTSP, Parameters.numGenes, true);
+				bestOverAllChromo = new Chromo(viewTSP, Parameters.numGenes, true);
+			}
+		}
+		else{
+			bestOfGenChromo = new Chromo();
+			bestOfRunChromo = new Chromo();
+			bestOverAllChromo = new Chromo();
+		}
+	
 		if (Parameters.minORmax.equals("max")){
 			defaultBest = 0;
 			defaultWorst = 999999999999999999999.0;
+			optChromo = -1;
 		}
 		else{
 			defaultBest = 999999999999999999999.0;
 			defaultWorst = 0;
+			optChromo = -1;
 		}
 
 		bestOverAllChromo.rawFitness = defaultBest;
 
 		//  Start program for multiple runs
-		for (R = 1; R <= Parameters.numRuns; R++){
+		for (R = 1; R <= Parameters.numRuns; R++){	
 
 			bestOfRunChromo.rawFitness = defaultBest;
+			optChromo = -1;
+			System.out.println("Run: " + R);
 			System.out.println();
 
 			//	Initialize First Generation
 			for (int i=0; i<Parameters.popSize; i++){
+				if (viewTSP){
+					if (tspRepresentative == 1)
+					{
+						member[i] = new Chromo(viewTSP, Parameters.numGenes);
+						child[i] = new Chromo(viewTSP, Parameters.numGenes);
+					}
+					else
+					{
+						member[i] = new Chromo(viewTSP, Parameters.numGenes, true);
+						child[i] = new Chromo(viewTSP, Parameters.numGenes, true);
+					}
+				}
+				else {
 				member[i] = new Chromo();
 				child[i] = new Chromo();
+				}
 			}
 
 			//	Begin Each Run
@@ -143,6 +216,8 @@ public class Search {
 				sumSclFitness = 0;
 				sumRawFitness = 0;
 				sumRawFitness2 = 0;
+				sumBestFit = 0;
+                sumBestFit2 = 0;
 				bestOfGenChromo.rawFitness = defaultBest;
 
 				//	Test Fitness of Each Member
@@ -191,10 +266,17 @@ public class Search {
 							bestOverAllR = R;
 							bestOverAllG = G;
 						}
-					}
-				}
-
+						if (optChromo == -1 && member[i].rawFitness == optOutput)
+							optChromo = G;
+					}  
+						if (optgen[R] == 0 && member[i].rawFitness == Parameters.geneSize){
+								optgen[R] = G;
+							}
+						}
+							
 				// Accumulate fitness statistics
+				sumBestFit = sumBestFit + bestOfGenChromo.rawFitness;
+                sumBestFit2 = sumBestFit + bestOfGenChromo.rawFitness * bestOfGenChromo.rawFitness;
 				fitnessStats[0][G] += sumRawFitness / Parameters.popSize;
 				fitnessStats[1][G] += bestOfGenChromo.rawFitness;
 
@@ -205,9 +287,26 @@ public class Search {
 							/
 							(Parameters.popSize-1)
 							);
+                               
+                                fitnessStats[2][G] += stdevRawFitness;
+                                
+                                 stdevBestFitness = Math.sqrt(
+                                                        Math.abs(sumBestFit2 - 
+							sumBestFit*sumBestFit/Parameters.popSize)
+							/
+							(Parameters.popSize-1)
+							);
+                                 fitnessStats[3][G] += stdevBestFitness;
+                                 
+                                 average95CI = 1.96*(stdevRawFitness/Math.sqrt(Parameters.popSize));
+                                 best95CI  = 1.96*(stdevBestFitness/Math.sqrt(Parameters.popSize));
+                                 
+                                  fitnessStats[4][G] += average95CI;
+                                  fitnessStats[5][G] += best95CI;       
 
 				// Output generation statistics to screen
-				System.out.println(R + "\t" + G +  "\t" + (int)bestOfGenChromo.rawFitness + "\t" + averageRawFitness + "\t" + stdevRawFitness);
+
+				System.out.println(R + "\t" + G +  "\t" + (int)bestOfGenChromo.rawFitness + "\t" + averageRawFitness + "\t" + stdevRawFitness  + "\t" + stdevBestFitness + "\t" + average95CI + "\t" + best95CI);
 
 				// Output generation statistics to summary file
 				summaryOutput.write(" R ");
@@ -217,8 +316,10 @@ public class Search {
 				Hwrite.right((int)bestOfGenChromo.rawFitness, 7, summaryOutput);
 				Hwrite.right(averageRawFitness, 11, 3, summaryOutput);
 				Hwrite.right(stdevRawFitness, 11, 3, summaryOutput);
-				summaryOutput.write("\n");
-
+				Hwrite.right(stdevBestFitness, 11, 3, summaryOutput);
+                Hwrite.right(average95CI, 11, 3, summaryOutput);
+                Hwrite.right(best95CI, 11, 3, summaryOutput);
+                summaryOutput.write("\n");
 
 		// *********************************************************************
 		// **************** SCALE FITNESS OF EACH MEMBER AND SUM ***************
@@ -317,6 +418,24 @@ public class Search {
 				int parent1 = -1;
 				int parent2 = -1;
 
+				if (Parameters.selectType == 4)
+				{
+					System.out.println("Classifying....");
+					Arrays.sort(member, new Comparator<Chromo>() {
+						public int compare(Chromo chromo1, Chromo chromo2){
+							return Double.valueOf(chromo1.rawFitness).compareTo(chromo2.rawFitness);
+						}
+					});
+					int rankSum = 0;
+					for (int j = 0; j < Parameters.popSize; j++)
+						rankSum += j;
+			
+					System.out.println("Ranking Sum found...");
+
+					for (int j=0; j<Parameters.popSize; j++){
+						Search.member[j].proFitness = ((double)j+1)/rankSum; 					}
+					System.out.println("Proportional Found...");
+				}
 				//  Assumes always two offspring per mating
 				for (int i=0; i<Parameters.popSize; i=i+2){
 
@@ -349,14 +468,17 @@ public class Search {
 				}
 
 			} //  Repeat the above loop for each generation
-
+			summaryOutput.write("First Optimal Generation Location and Best Fitness \n");
 			Hwrite.left(bestOfRunR, 4, summaryOutput);
 			Hwrite.right(bestOfRunG, 4, summaryOutput);
 
 			problem.doPrintGenes(bestOfRunChromo, summaryOutput);
+			Hwrite.left("O", 8, summaryOutput);
+			Hwrite.center(optChromo , 8, summaryOutput);
+			Hwrite.right("\n\n", 3, summaryOutput);
 
-			System.out.println(R + "\t" + "B" + "\t"+ (int)bestOfRunChromo.rawFitness);
-
+			System.out.println(R + "\t" + "B" + "\t"+ (int)bestOfRunChromo.rawFitness + "\t" + optgen[R]);
+			
 		} //End of a Run
 
 		Hwrite.left("B", 8, summaryOutput);
@@ -364,11 +486,15 @@ public class Search {
 		problem.doPrintGenes(bestOverAllChromo, summaryOutput);
 
 		//	Output Fitness Statistics matrix
-		summaryOutput.write("Gen                 AvgFit              BestFit \n");
+		summaryOutput.write("Gen            AvgFit              BestFit           AvgStdDev          BestStdDev        Avg95ConfInt     AvgBest95ConfInt\n");
 		for (int i=0; i<Parameters.generations; i++){
 			Hwrite.left(i, 15, summaryOutput);
 			Hwrite.left(fitnessStats[0][i]/Parameters.numRuns, 20, 2, summaryOutput);
 			Hwrite.left(fitnessStats[1][i]/Parameters.numRuns, 20, 2, summaryOutput);
+			Hwrite.left(fitnessStats[2][i]/Parameters.numRuns, 20, 2, summaryOutput);
+			Hwrite.left(fitnessStats[3][i]/Parameters.numRuns, 20, 2, summaryOutput);
+			Hwrite.left(fitnessStats[4][i]/Parameters.numRuns, 20, 2, summaryOutput);
+			Hwrite.left(fitnessStats[5][i]/Parameters.numRuns, 20, 2, summaryOutput);
 			summaryOutput.write("\n");
 		}
 

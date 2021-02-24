@@ -39,6 +39,8 @@ public class Parameters
 	public static int numGenes;
 	public static int geneSize;
 
+	public static int fitEvalXY;
+
 /*******************************************************************************
 *                              CONSTRUCTORS                                    *
 *******************************************************************************/
@@ -69,6 +71,7 @@ public class Parameters
 		numGenes = Integer.parseInt(parmInput.readLine().substring(30).trim());
 		geneSize = Integer.parseInt(parmInput.readLine().substring(30).trim());
 
+		fitEvalXY= Integer.parseInt(parmInput.readLine().substring(30).trim());
 		parmInput.close();
 
 		if (scaleType==0 || scaleType==2) minORmax = "max";
@@ -109,7 +112,7 @@ public class Parameters
 		output.write("Random Number Seed           :  " + seed + "\n");
 		output.write("Number of Genes/Points       :  " + numGenes + "\n");
 		output.write("Size of Genes                :  " + geneSize + "\n");
-
+		output.write("Fitness Evaluation X and Y Function  :  " + fitEvalXY + "\n");
 		output.write("\n\n");
 
 	}
