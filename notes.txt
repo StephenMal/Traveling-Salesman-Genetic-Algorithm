@@ -1,1 +1,0 @@
-missing the TPS and TPS2 from chromo. Adjust and adapt the TPS file. 
