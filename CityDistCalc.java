@@ -17,7 +17,7 @@ public class CityDistCalc
   public CityDistCalc(){
     System.out.println("Calculating city dist");
     // Reads in the input and saves it into the files
-    readInput("inputs/att48.tsp");
+    readInput(Parameters.dataInputFileName);
 
     // Calculate and cache the distance between cities
     double tempDbl;
@@ -82,6 +82,8 @@ public class CityDistCalc
       System.out.println(data);
       dataSplit = data.split(" : ",0);
       dim = Integer.parseInt(dataSplit[1]);
+      Parameters.numGenes = dim;
+      Parameters.numCity = dim;
 
       // Saves edge_weight_type from file
       data = inputReader.nextLine();

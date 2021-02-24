@@ -1,10 +1,10 @@
 Experiment ID                :tspreptwo
 Problem Type                 :T2
-Data Input File Name         :NA
+Data Input File Name         :att48.tsp
 Number of Cities             :48
 Number of Runs               :10
-Generations per Run          :70
-Population Size              :2000
+Generations per Run          :100
+Population Size              :1000
 Selection Method (1)         :2
 Fitness Scaling Type (2)     :3
 Crossover Type (3)           :1
