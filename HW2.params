@@ -1,6 +1,6 @@
 Experiment ID                :HW2
 Problem Type                 :T1
-Data Input File Name         :inputs/att48.tsp
+Data Input File Name         :inputs/berlin52.tsp
 Number of Runs               :10
 Generations per Run          :250
 Population Size              :250
