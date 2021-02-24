@@ -86,6 +86,7 @@ public class CityDistCalc
       System.out.println(data);
       dataSplit = data.split(" : ",0);
       dim = Integer.parseInt(dataSplit[1]);
+      Parameters.numGenes = dim;
 
       // Saves edge_weight_type from file
       data = inputReader.nextLine();
