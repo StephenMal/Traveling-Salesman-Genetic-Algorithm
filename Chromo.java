@@ -53,14 +53,17 @@ public class Chromo
 		this.chromo = "";
 
 		// Initialize list of cities
-		for (int j = 0; j < Parameters.numCity; j++)
+		for (int j = 0; j < Parameters.numCity; j++){
 			cities.add(j+1);
+			//System.out.println("Cities: " + cities.get(j));
+		}
 
 		// Randomize order of cities
 		Collections.shuffle(cities);
 		
 		if (Parameters.numCity >= 10 && Parameters.numCity <= 99){
 			for (int curCity : cities){
+				//System.out.println("Cities: " + curCity);
 				if (curCity <= 9){
 					this.chromo = this.chromo + "0" + String.valueOf(curCity);
 				}
@@ -86,7 +89,7 @@ public class Chromo
 			}
 		}
 
-		System.out.println("Chromo: " + this.chromo);
+		//System.out.println("Chromo: " + this.chromo);
 
 		this.rawFitness = -1;   //  Fitness not yet evaluated
 		this.sclFitness = -1;   //  Fitness not yet scaled
@@ -159,30 +162,16 @@ public class Chromo
 		char x;
 
 		switch (Parameters.mutationType){
-
-		case 1:     //  Replace with new random number
-
-			for (int j=0; j<(Parameters.geneSize * Parameters.numGenes); j++){
-				x = this.chromo.charAt(j);
-				randnum = Search.r.nextDouble();
-				if (randnum < Parameters.mutationRate){
-					if (x == '1') x = '0';
-					else x = '1';
-				}
-				mutChromo = mutChromo + x;
-			}
-			this.chromo = mutChromo;
-			break;
 		
-		case 2:     //  For TSP: swap with random city
+		case 1:     //  For TSP: swap with random city
 			randnum = Search.r.nextDouble();
 			ArrayList<Integer> citiesMut = new ArrayList<Integer>();
 
-			System.out.println("this.chromo: " + this.chromo);
+			//System.out.println("this.chromo: " + this.chromo);
 
 			if (Parameters.numCity >= 10 && Parameters.numCity <= 99){
 				
-				// Convert string to ArrayList<Integet>
+				// Convert string to ArrayList<Integer>
 				for (int i=0; i<Parameters.numCity; i++){
 					citiesMut.add(getIntGeneValueTSP(i));
 				}
@@ -209,7 +198,7 @@ public class Chromo
 			}
 			else{
 
-				// Convert string to ArrayList<Integet>
+				// Convert string to ArrayList<Integer>
 				for (int i=0; i<Parameters.numCity; i++){
 					citiesMut.add(getIntGeneValueTSP(i));
 				}
@@ -240,6 +229,8 @@ public class Chromo
 				}
 			}
 			break;
+
+		case 2:
 
 		default:
 			System.out.println("ERROR - No mutation method selected");
@@ -298,41 +289,75 @@ public class Chromo
 
 		switch (Parameters.xoverType){
 
-		case 1:     //  Single Point Crossover
-
-			//  Select crossover point
-			xoverPoint1 = 1 + (int)(Search.r.nextDouble() * (Parameters.numGenes * Parameters.geneSize-1));
-
-			//  Create child chromosome from parental material
-			child1.chromo = parent1.chromo.substring(0,xoverPoint1) + parent2.chromo.substring(xoverPoint1);
-			child2.chromo = parent2.chromo.substring(0,xoverPoint1) + parent1.chromo.substring(xoverPoint1);
-			break;
-
-		case 2:     //  Single Point Crossover for TSP
+		case 1:     //  Single Point Crossover for TSP
 			
-			ArrayList<Integer> citiesXover = new ArrayList<Integer>();
-			//public sta
+			ArrayList<Integer> citiesP1 = new ArrayList<Integer>();
+			ArrayList<Integer> citiesP2 = new ArrayList<Integer>();
+			//List<Integer> citiesC1 = new ArrayList<Integer>();
+			//List<Integer> citiesC2 = new ArrayList<Integer>();
 
-			// Convert string to ArrayList<Integet>
-			//for (int i=0; i<Parameters.numCity; i++){
-			//	citiesXover.add(getIntGeneValueTSP(i));
-			//}
+			// Convert parent1 and parent2 strings to ArrayList<Integer>
+			for (int i=0; i<Parameters.numCity; i++){
+				citiesP1.add(parent1.getIntGeneValueTSP(i));
+				citiesP2.add(parent2.getIntGeneValueTSP(i));
+			}
 					
 			xoverPoint1 = 1 + Search.r.nextInt(Parameters.numCity-1);
-
-			//for (int curCity : citiesXover.subList(xoverPoint1)){
-			//for (int i=0; i<Parameters.numCity; i++){
-			//	if (
-			//}
-
-			//child1.chromo = parent1.chromo.substring(0,xoverPoint1);
 			
-			//for (int i=0; i < Parameters.numCity-xoverPoint1) 
-			
-			//child1.chromo = parent1.chromo.substring(0,xoverPoint1) + parent2.chromo.substring(xoverPoint1);
-			
+			// Create child1
+			List<Integer> citiesC1 = citiesP1.subList(0, xoverPoint1);  
 
+			for (int curCity : citiesP2){
+				if (!citiesC1.contains(curCity)){
+					citiesC1.add(curCity);
+				}
+			}
 
+			// Create child2
+			List<Integer> citiesC2 = citiesP2.subList(0, xoverPoint1);  
+			for (int curCity : citiesP1){
+				if (!citiesC2.contains(curCity)){
+					citiesC2.add(curCity);
+				}
+			}
+
+			//System.out.println("Parent 1: " + citiesP1);
+			//System.out.println("Parent 2: " + citiesP2);
+			//System.out.println("Child 1: " + citiesC1);
+			//System.out.println("Child 2: " + citiesC2);
+
+			// Convert children to strings
+			if (Parameters.numCity >= 10 && Parameters.numCity <= 99){
+				for (int curCity : citiesC1){
+					if (curCity <= 9){
+						child1.chromo = child1.chromo + "0" + String.valueOf(curCity);
+					}
+					else{
+						child1.chromo = child1.chromo + "" + String.valueOf(curCity);
+					}
+				}
+			}
+			else{
+				for (int curCity : citiesC2){
+					if (curCity <= 9){
+						child2.chromo = child2.chromo + "000" + String.valueOf(curCity);
+					}
+					else if (curCity <= 99){
+						child2.chromo = child2.chromo + "00" + String.valueOf(curCity);
+					}
+					else if (curCity <= 999){
+						child2.chromo = child2.chromo + "0" + String.valueOf(curCity);
+					}
+					else{
+						child2.chromo = child2.chromo + "" + String.valueOf(curCity);
+					}
+				}
+			}
+
+			break;
+
+		case 2:     //  Two-point Crossover
+		
 		case 3:     //  Uniform Crossover
 
 		default:

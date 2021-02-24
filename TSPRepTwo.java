@@ -36,7 +36,6 @@ public class TSPRepTwo extends FitnessFunction{
 		// Set-up variables
 		X.rawFitness = 0; //sets fitness at 0
 		int[] chromogenes = new int[Parameters.numGenes];  //to store genes
-		//int[] cityOrder = new int[Parameters.numGenes+1]; //to store city order
 
 		// Records the genes in a list as integers
 		for (int z=0; z<Parameters.numGenes; z++){
@@ -44,23 +43,6 @@ public class TSPRepTwo extends FitnessFunction{
             //System.out.println("chromogenes[z]: " + chromogenes[z]);
 		}
 
-        /*
-		// Records city order to follow the lowest valued chromosomes
-		for (int z=0; z<Parameters.numGenes; z++){
-			int minValue = Integer.MAX_VALUE;
-			int minValueIndex = -1;
-			for (int i=0; i<Parameters.numGenes;i++){
-				if(chromogenes[i] < minValue){
-					minValue = chromogenes[i];
-					minValueIndex = i;
-				}
-			}
-			cityOrder[minValueIndex] = z;
-			chromogenes[minValueIndex] = Integer.MAX_VALUE;
-		}
-		//cityOrder[Parameters.numGenes] = cityOrder[0]; //ends where it started
-        */
-        //X.rawFitness += CityDistCalc.getCityDistance(chromogenes[z],chromogenes[z+1]);
 		// Sums distances
 		for (int z=0; z<Parameters.numGenes-1; z++){
 			X.rawFitness += CityDistCalc.getCityDistance(chromogenes[z]-1,chromogenes[z+1]-1);
