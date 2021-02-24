@@ -104,7 +104,7 @@ public class Search {
 				problem = new OneMax();
 		}
 		else if (Parameters.problemType.equals("T1")){
-				problem = new TSPRepOne();
+				problem = new HW2();
 		}
 		else System.out.println("Invalid Problem Type");
 

@@ -7,7 +7,7 @@ import java.io.*;
 import java.util.*;
 import java.text.*;
 
-public class TSPRepOne extends FitnessFunction{
+public class HW2 extends FitnessFunction{
 
 /*******************************************************************************
 *                            INSTANCE VARIABLES                                *
@@ -23,7 +23,7 @@ public class TSPRepOne extends FitnessFunction{
 *                              CONSTRUCTORS                                    *
 *******************************************************************************/
 
-	public TSPRepOne(){
+	public HW2(){
 		name = "Traveling Salesman Problem RepOne";
 	}
 
